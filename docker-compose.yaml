@@ -43,6 +43,8 @@ services:
 
 networks:
   order-service-network:
+    external: true
+    name: order-management-network
 
 volumes:
   order-database:

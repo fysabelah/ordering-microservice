@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +53,11 @@ public class OrderWeb {
         controller.updateToOnCarrier(id, trackingNumber);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/port")
+    @Operation(summary = "Veja a porta de execução do serviço")
+    public String findPort(@Value("${eureka.instance.instance-id}") String port) {
+        return String.format("Rodando na porta: %s", port);
     }
 }
