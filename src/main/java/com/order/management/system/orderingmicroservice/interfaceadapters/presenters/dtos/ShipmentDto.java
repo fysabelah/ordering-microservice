@@ -23,7 +23,13 @@ public class ShipmentDto {
     private String street;
 
     @Schema(description = "Quadra", example = "qd 735")
-    private String block;
+    private String neighborhood;
+
+    @Schema(description = "Cidade", example = "São Paulo")
+    private String city;
+
+    @Schema(description = "Estado", example = "São Paulo")
+    private String state;
 
     @NotBlank
     @Schema(description = "Número do lote", example = "95")
@@ -42,7 +48,7 @@ public class ShipmentDto {
 
     public ShipmentDto(Shipment shipment) {
         this.street = shipment.getStreet();
-        this.block = shipment.getBlock();
+        this.neighborhood = shipment.getNeighborhood();
         this.number = shipment.getNumber();
         this.complement = shipment.getComplement();
         this.cep = shipment.getCep();

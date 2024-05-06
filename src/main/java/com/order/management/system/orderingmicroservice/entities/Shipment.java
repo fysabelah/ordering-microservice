@@ -35,7 +35,7 @@ public class Shipment {
     private String street;
 
     @Column(nullable = false)
-    private String block;
+    private String neighborhood;
 
     @Column(nullable = false)
     private String number;
@@ -45,12 +45,20 @@ public class Shipment {
     @Column(nullable = false)
     private String cep;
 
+    @Column(nullable = false)
+    private String city;
+
+    @Column(nullable = false)
+    private String state;
+
     public Shipment(ShipmentDto dto) {
         this.freight = dto.getFreight();
         this.street = dto.getStreet();
-        this.block = dto.getBlock();
+        this.neighborhood = dto.getNeighborhood();
         this.number = dto.getNumber();
         this.complement = dto.getComplement();
         this.cep = dto.getCep();
+        this.city = dto.getCity();
+        this.state = dto.getState();
     }
 }

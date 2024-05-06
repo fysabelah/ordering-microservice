@@ -2,8 +2,10 @@ package com.order.management.system.orderingmicroservice.interfaceadapters.prese
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,16 @@ public class Dto {
     @NotBlank
     @Schema(description = "Nome do cliente", example = "Fernanda")
     private String name;
+
+    @NotBlank
+    @Email
+    @Schema(description = "E-mail do cliente", example = "nanda@gmail.com")
+    private String email;
+
+    @NotBlank
+    @Schema(description = "Telefone do cliente")
+    @Pattern(regexp = "\\+[0-9]{2} [0-9]{2} 9 [0-9]{4}-[0-9]{4}")
+    private String cellphone;
 
     @Schema(description = "Descontos a serem aplicados", example = "8.95")
     private BigDecimal discounts;
