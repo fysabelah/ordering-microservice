@@ -62,7 +62,7 @@ public class OrderUserCase {
     public Order createOrder(Dto dto) {
         Order order = new Order();
 
-        order.setClient(clientPresenter.convert(dto.getDocument(), dto.getName()));
+        order.setClient(clientPresenter.convert(dto));
         order.setStatus(OrderStatus.PENDING);
 
         order.setItems(productsPresenter.convertToEntity(dto.getItems()));

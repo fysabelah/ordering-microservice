@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.ClientPresenter;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.messages.ClientMessage;
-import jakarta.annotation.Resource;
 import org.springframework.amqp.core.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class ClientMessaging extends PublishMessageQueue {
     @Value("${messaging.queue.client}")
     private String queue;
 
-    @Resource
+    @Autowired
     private ClientPresenter presenter;
 
     public void sendMessage(Order order) throws JsonProcessingException {

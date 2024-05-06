@@ -13,11 +13,19 @@ public class ClientMessage {
 
     private String name;
 
+    private String email;
+
+    private String cellphone;
+
     private String street;
 
-    private String block;
+    private String neighborhood;
 
     private String number;
+
+    private String state;
+
+    private String city;
 
     private String complement;
 
