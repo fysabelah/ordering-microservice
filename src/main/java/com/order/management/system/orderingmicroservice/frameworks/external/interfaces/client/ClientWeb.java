@@ -39,7 +39,7 @@ public class ClientWeb {
 
             throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_EXTERNAL_SERVICE_CLIENT", document), exception);
         } catch (Exception exception) {
-            throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_EXTERNAL_SERVICE_CLIENT", document), exception);
+            throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_GENERAL_EXCEPTION", "consulta do cliente " + document), exception);
         }
     }
 
@@ -51,7 +51,7 @@ public class ClientWeb {
         } catch (FeignException feignException) {
             throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_EXTERNAL_SERVICE_CLIENT_INSERT", message.getDocument()), feignException);
         } catch (Exception exception) {
-            throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_EXTERNAL_SERVICE_CLIENT", message.getDocument()), exception);
+            throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_GENERAL_EXCEPTION", "inserção do cliente " + message.getDocument()), exception);
         }
     }
 }

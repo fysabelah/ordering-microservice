@@ -72,6 +72,7 @@ public class ClientPresenter {
         json.put("ativo", true);
         json.put("email", client.getEmail());
         json.put("tipoPagamentoPreferencial", "CARTAO_CREDITO");
+        json.put("telefone", client.getCellphone());
 
         ArrayNode addresses = objectMapper.createArrayNode();
         ObjectNode address = objectMapper.createObjectNode();
@@ -91,8 +92,8 @@ public class ClientPresenter {
         ArrayNode documents = objectMapper.createArrayNode();
         ObjectNode document = objectMapper.createObjectNode();
 
-        address.put("documento", client.getDocument());
-        address.put("tipoDocumentoCliente", getDocumentType(client.getDocument()));
+        document.put("documento", client.getDocument());
+        document.put("tipoDocumentoCliente", getDocumentType(client.getDocument()));
 
         documents.add(document);
 
