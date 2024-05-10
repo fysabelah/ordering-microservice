@@ -32,14 +32,6 @@ public class OrderGateway {
                 .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage("MESSAGE_ID_NOT_FOUND", "Pedido", id.toString())));
     }
 
-    public Optional<Order> findByIdAndClientDocument(Integer orderId, String clientDocument) {
-        if (orderId == null || clientDocument == null || clientDocument.trim().isEmpty()) {
-            throw new IllegalArgumentException(MessageUtil.getMessage("MESSAGE_MISSING_ATTRIBUTES"));
-        }
-
-        return repository.findByIdAndClientDocument(orderId, clientDocument);
-    }
-
     public void update(Order order) {
         repository.save(order);
     }
