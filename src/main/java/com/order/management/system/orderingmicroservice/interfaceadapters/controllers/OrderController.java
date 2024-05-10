@@ -2,7 +2,6 @@ package com.order.management.system.orderingmicroservice.interfaceadapters.contr
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
-import com.order.management.system.orderingmicroservice.entities.StatusHistory;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.ClientMessaging;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.PaymentMessaging;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.StockMessaging;
@@ -12,17 +11,10 @@ import com.order.management.system.orderingmicroservice.interfaceadapters.presen
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.dtos.OrderDto;
 import com.order.management.system.orderingmicroservice.usercase.OrderUserCase;
 import com.order.management.system.orderingmicroservice.util.MessageUtil;
-import com.order.management.system.orderingmicroservice.util.enums.OrderCancellationType;
-import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
-import com.order.management.system.orderingmicroservice.util.exception.BusinessException;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Component
 public class OrderController {
@@ -58,7 +50,7 @@ public class OrderController {
         clientMessaging.sendMessage(order);
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_STOCK", order.getId().toString()));
-        stockMessaging.sendMessageProcessStock(order.getItems(), order.getId());
+        stockMessaging.sendMessageProcessStock(dto.getItems(), order.getId());
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_PAYMENT", order.getId().toString()));
         paymentMessaging.sendMessage(dto.getPayment(), order.getId());
@@ -70,45 +62,5 @@ public class OrderController {
         Order order = gateway.findById(id);
 
         return presenter.convert(order);
-    }
-
-    public void cancel(Integer orderId, String document, OrderCancellationType motive) throws JsonProcessingException {
-        Optional<Order> optional = gateway.findByIdAndClientDocument(orderId, document);
-
-        if (optional.isEmpty()) {
-            throw new NoSuchElementException(MessageUtil.getMessage("MESSAGE_ID_NOT_FOUND", "Pedido", orderId.toString()));
-        }
-
-        Order order = optional.get();
-
-        if (order.getStatusHistory() != null && hasStock(order.getStatusHistory())) {
-            LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_SEND_STOCK_UPDATE_ALREADY_SEPARATED"));
-            stockMessaging.sendMessageCancelReservation(order.getId(), order.getItems());
-        }
-
-        LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_UPDATING_ORDER", order.getId().toString(), "cancelamento"));
-
-        business.updateToCancel(order, motive);
-
-        gateway.update(order);
-
-        LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_CANCEL_ORDER", order.getId().toString(), order.getMotive().toString()));
-    }
-
-    private boolean hasStock(List<StatusHistory> statusHistories) {
-        return statusHistories.stream()
-                .anyMatch(statusHistory -> OrderStatus.STOCK_SEPARATION.compareTo(statusHistory.getStatus()) == 0);
-    }
-
-    public void updateToOnCarrier(Integer id, String trackingNumber) throws BusinessException {
-        Order order = gateway.findById(id);
-
-        LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_UPDATING_ORDER", order.getId().toString(), "atualização de status"));
-
-        business.updateToOnCarrier(order, trackingNumber);
-
-        gateway.update(order);
-
-        LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_UPDATE_ORDER", order.getId().toString(), OrderStatus.SHIPPING_READY.toString(), OrderStatus.ON_CARRIAGE.name()));
     }
 }
