@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.client.ClientPublishMessage;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.PaymentMessaging;
-import com.order.management.system.orderingmicroservice.frameworks.external.messaging.StockMessaging;
+import com.order.management.system.orderingmicroservice.frameworks.external.messaging.product.StockProduceMessage;
 import com.order.management.system.orderingmicroservice.interfaceadapters.gateways.OrderGateway;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.OrderPresenter;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.dtos.Dto;
@@ -32,7 +32,7 @@ public class OrderController {
     private ClientPublishMessage clientPublishMessage;
 
     @Resource
-    private StockMessaging stockMessaging;
+    private StockProduceMessage stockProduceMessage;
 
     @Resource
     private PaymentMessaging paymentMessaging;
@@ -50,7 +50,7 @@ public class OrderController {
         clientPublishMessage.sendMessage(order);
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_STOCK", order.getId().toString()));
-        stockMessaging.sendMessageProcessStock(dto.getItems(), order.getId());
+        stockProduceMessage.sendMessageProcessStock(dto.getItems(), order.getId());
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_PAYMENT", order.getId().toString()));
         paymentMessaging.sendMessage(dto.getPayment(), order.getId());

@@ -28,13 +28,21 @@ public class MessagingBeans {
     private String stockProcessQueue;
 
     @Value("${messaging.queue.stock.cancelation}")
-    private String stockUpdateQueue;
+    private String stockCancelQueue;
 
     @Value("${messaging.queue.payment}")
     private String paymentProcessQueue;
 
     @Value("${messaging.queue.transportation.cancel}")
     private String transportSendCancelation;
+
+    private static final String EXCHANGE_FALLBACK = "x.process-failure";
+
+    private static final String QUEUE_FALLBACK = "q.fall-back-process";
+
+    private static final String DEAD_LETTER_EXCHANGE_KEY = "x-dead-letter-exchange";
+
+    private static final String DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
 
     public MessagingBeans(CachingConnectionFactory cachingConnectionFactory) {
         this.cachingConnectionFactory = cachingConnectionFactory;
@@ -43,8 +51,8 @@ public class MessagingBeans {
     @Bean
     public Queue createClientValidateQueue() {
         return QueueBuilder.durable(clientValidateQueue)
-                .withArgument("x-dead-letter-exchange", "x.process-failure")
-                .withArgument("x-dead-letter-routing-key", "client")
+                .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK)
+                .withArgument(DEAD_LETTER_ROUTING_KEY, "client")
                 .build();
     }
 
@@ -55,12 +63,18 @@ public class MessagingBeans {
 
     @Bean
     public Queue createStockProcessQueue() {
-        return new Queue(stockProcessQueue, true);
+        return QueueBuilder.durable(stockProcessQueue)
+                .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK)
+                .withArgument(DEAD_LETTER_ROUTING_KEY, "stock-reservation")
+                .build();
     }
 
     @Bean
     public Queue createStockCancelationQueue() {
-        return new Queue(stockUpdateQueue, true);
+        return QueueBuilder.durable(stockCancelQueue)
+                .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK)
+                .withArgument(DEAD_LETTER_ROUTING_KEY, "stock-cancelation")
+                .build();
     }
 
     @Bean
@@ -96,9 +110,11 @@ public class MessagingBeans {
     @Bean
     public Declarables createDeadLetterSchema() {
         return new Declarables(
-                new DirectExchange("x.process-failure"),
-                new Queue("q.fall-back-process"),
-                new Binding("q.fall-back-process", Binding.DestinationType.QUEUE, "x.process-failure", "client", null)
+                new DirectExchange(EXCHANGE_FALLBACK),
+                new Queue(QUEUE_FALLBACK),
+                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "client", null),
+                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "stock-reservation", null),
+                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "stock-cancelation", null)
         );
     }
 

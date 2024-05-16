@@ -2,7 +2,7 @@ package com.order.management.system.orderingmicroservice.interfaceadapters.contr
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
-import com.order.management.system.orderingmicroservice.frameworks.external.messaging.StockMessaging;
+import com.order.management.system.orderingmicroservice.frameworks.external.messaging.product.StockProduceMessage;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.TransportationMessaging;
 import com.order.management.system.orderingmicroservice.interfaceadapters.gateways.OrderGateway;
 import com.order.management.system.orderingmicroservice.usercase.OrderStatusUserCase;
@@ -27,7 +27,7 @@ public class OrderStatusController {
     private OrderStatusUserCase userCase;
 
     @Autowired
-    private StockMessaging stockMessaging;
+    private StockProduceMessage stockProduceMessage;
 
     @Autowired
     private TransportationMessaging transportationMessaging;
@@ -47,7 +47,7 @@ public class OrderStatusController {
     }
 
     public void updateStatus(Integer orderId, String tracking, String urlTracking) throws BusinessException {
-        Order order = orderGateway.findById(orderId);
+        Order order = orderGateway.findByIdWithStatusHistory(orderId);
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_UPDATING_ORDER", order.getId().toString(), "atualização de status"));
 
@@ -59,12 +59,12 @@ public class OrderStatusController {
     }
 
     public void cancel(Integer orderId, OrderCancellationType cancellationType) throws JsonProcessingException {
-        Order order = orderGateway.findById(orderId);
+        Order order = orderGateway.findByIdWithStatusHistory(orderId);
 
         if (userCase.hasStock(order.getStatusHistory())) {
             LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_SEND_STOCK_UPDATE_ALREADY_SEPARATED"));
 
-            stockMessaging.sendMessageUpdateStock(order.getId(), order.getItems());
+            stockProduceMessage.sendMessageUpdateStock(order.getId(), order.getItems());
         }
 
         if (userCase.hasTransportantionHistory(order.getStatusHistory())) {
