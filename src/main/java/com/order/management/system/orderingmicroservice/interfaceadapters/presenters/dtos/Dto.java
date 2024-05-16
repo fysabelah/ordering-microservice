@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 public class Dto {
 
     @NotBlank
-    @Max(value = 14)
+    @Length(min = 8, max = 14)
     @Schema(description = "Documento do cliente sem pontuação", example = "85369855474")
     private String document;
 

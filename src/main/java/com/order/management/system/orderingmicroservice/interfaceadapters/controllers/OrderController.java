@@ -2,7 +2,7 @@ package com.order.management.system.orderingmicroservice.interfaceadapters.contr
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
-import com.order.management.system.orderingmicroservice.frameworks.external.messaging.ClientMessaging;
+import com.order.management.system.orderingmicroservice.frameworks.external.messaging.client.ClientPublishMessage;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.PaymentMessaging;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.StockMessaging;
 import com.order.management.system.orderingmicroservice.interfaceadapters.gateways.OrderGateway;
@@ -29,7 +29,7 @@ public class OrderController {
     private OrderPresenter presenter;
 
     @Resource
-    private ClientMessaging clientMessaging;
+    private ClientPublishMessage clientPublishMessage;
 
     @Resource
     private StockMessaging stockMessaging;
@@ -47,7 +47,7 @@ public class OrderController {
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_ORDER_CREATED", order.getId().toString()));
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_CLIENT", order.getId().toString(), order.getClient().getDocument()));
-        clientMessaging.sendMessage(order);
+        clientPublishMessage.sendMessage(order);
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_STOCK", order.getId().toString()));
         stockMessaging.sendMessageProcessStock(dto.getItems(), order.getId());

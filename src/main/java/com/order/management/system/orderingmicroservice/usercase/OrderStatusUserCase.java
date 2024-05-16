@@ -79,7 +79,7 @@ public class OrderStatusUserCase {
 
             order.setStatus(newStatus);
 
-            StatusHistory statusHistory = new StatusHistory(OrderStatus.CANCELED, LocalDateTime.now(clock));
+            StatusHistory statusHistory = new StatusHistory(newStatus, LocalDateTime.now(clock));
             order.getStatusHistory().add(statusHistory);
 
             return true;

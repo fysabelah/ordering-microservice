@@ -30,6 +30,4 @@ public class ClientMessage {
     private String complement;
 
     private String cep;
-
-    private Integer numberOfAttempts;
 }

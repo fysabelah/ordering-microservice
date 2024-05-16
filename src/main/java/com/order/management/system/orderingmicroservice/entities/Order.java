@@ -49,6 +49,6 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     private Shipment shipment;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<StatusHistory> statusHistory;
 }

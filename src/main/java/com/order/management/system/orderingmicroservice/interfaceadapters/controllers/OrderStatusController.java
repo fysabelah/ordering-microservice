@@ -33,7 +33,7 @@ public class OrderStatusController {
     private TransportationMessaging transportationMessaging;
 
     public void updateStatus(OrderStatus status, Integer orderId) {
-        Order order = orderGateway.findById(orderId);
+        Order order = orderGateway.findByIdWithStatusHistory(orderId);
 
         OrderStatus old = order.getStatus();
 
