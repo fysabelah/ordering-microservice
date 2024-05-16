@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/v1/order")
+@RequestMapping(value = "/api/v1/order")
 @Tag(name = "Pedidos", description = "Metódos para criação de pedidos")
 public class OrderWeb {
 

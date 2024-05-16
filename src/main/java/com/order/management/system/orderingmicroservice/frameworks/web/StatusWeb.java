@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/v1/status")
+@RequestMapping(value = "/api/v1/order/status")
 @Tag(name = "Status", description = "Metódos para atualização de status de pedido")
 public class StatusWeb {
 

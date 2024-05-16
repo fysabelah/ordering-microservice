@@ -50,6 +50,8 @@ public class ShipmentDto {
         this.street = shipment.getStreet();
         this.neighborhood = shipment.getNeighborhood();
         this.number = shipment.getNumber();
+        this.city = shipment.getCity();
+        this.state = shipment.getState();
         this.complement = shipment.getComplement();
         this.cep = shipment.getCep();
         this.freight = shipment.getFreight();

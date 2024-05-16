@@ -6,8 +6,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+
 @Service
-class PublishMessageQueue {
+public class PublishMessageQueue {
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -15,7 +17,10 @@ class PublishMessageQueue {
     @Autowired
     private RabbitTemplate template;
 
-    public void sendMessage(Message message, String queue) {
+    protected void sendMessage(Message message, String queue) {
+        message.getMessageProperties().setContentEncoding(StandardCharsets.UTF_8.name());
+        message.getMessageProperties().setContentType("application/json");
+
         template.send(queue, message);
     }
 }

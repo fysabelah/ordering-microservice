@@ -58,7 +58,6 @@ public class ClientPresenter {
         message.setNumber(order.getShipment().getNumber());
         message.setComplement(order.getShipment().getComplement());
         message.setCep(order.getShipment().getCep());
-        message.setNumberOfAttempts(0);
         message.setCity(order.getShipment().getCity());
         message.setState(order.getShipment().getState());
 
@@ -77,7 +76,7 @@ public class ClientPresenter {
         ArrayNode addresses = objectMapper.createArrayNode();
         ObjectNode address = objectMapper.createObjectNode();
 
-        address.put("tipoEndereco", "OUTROS");
+        address.put("tipoEndereco", "OUTRO");
         address.put("logradouro", client.getStreet());
         address.put("numero", client.getNumber());
         address.put("bairro", client.getNeighborhood());

@@ -47,4 +47,9 @@ public class OrderGateway {
 
         return order;
     }
+
+    public Order findByIdWithStatusHistory(Integer orderId) {
+        return repository.findByIdWithStatusHistory(orderId)
+                .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage("MESSAGE_ID_NOT_FOUND", "Pedido", orderId.toString())));
+    }
 }
