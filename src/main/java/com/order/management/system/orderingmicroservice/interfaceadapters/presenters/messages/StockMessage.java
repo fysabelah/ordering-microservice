@@ -26,10 +26,13 @@ public class StockMessage {
 
         private BigDecimal value;
 
-        public Product(String sku, Integer quantity, BigDecimal value) {
+        private String reservation;
+
+        public Product(String sku, Integer quantity, BigDecimal value, String reservation) {
             this.sku = sku;
             this.quantity = quantity;
             this.value = value;
+            this.reservation = reservation;
         }
     }
 }
