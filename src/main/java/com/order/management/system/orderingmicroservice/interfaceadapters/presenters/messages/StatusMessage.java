@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,4 +18,6 @@ public class StatusMessage {
     private OrderStatus status;
 
     private OrderCancellationType motive;
+
+    private LocalDateTime processAt;
 }
