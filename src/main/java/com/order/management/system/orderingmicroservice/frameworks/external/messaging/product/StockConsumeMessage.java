@@ -1,7 +1,8 @@
 package com.order.management.system.orderingmicroservice.frameworks.external.messaging.product;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.frameworks.external.interfaces.product.InventoryWeb;
-import com.order.management.system.orderingmicroservice.interfaceadapters.controllers.OrderStatusController;
+import com.order.management.system.orderingmicroservice.frameworks.external.messaging.status.StatusPublishMessage;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.messages.StockMessage;
 import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
 import com.order.management.system.orderingmicroservice.util.exception.ExternalInterfaceException;
@@ -16,13 +17,13 @@ public class StockConsumeMessage {
     private InventoryWeb inventoryWeb;
 
     @Autowired
-    private OrderStatusController statusController;
+    private StatusPublishMessage statusPublishMessage;
 
     @RabbitListener(queues = "stock.process")
-    public void confirm(StockMessage stockMessage) throws ExternalInterfaceException {
+    public void confirm(StockMessage stockMessage) throws ExternalInterfaceException, JsonProcessingException {
         inventoryWeb.confirmReservation(stockMessage);
 
-        statusController.updateStatus(OrderStatus.STOCK_SEPARATION, stockMessage.getOrderId());
+        statusPublishMessage.sendMessage(stockMessage.getOrderId(), OrderStatus.STOCK_SEPARATION);
     }
 
     @RabbitListener(queues = "stock.cancelation")

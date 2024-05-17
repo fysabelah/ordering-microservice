@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,7 +26,7 @@ public class PaymentDto {
     @Schema(description = "Bandeira do cartão", example = "Visa")
     private String brand;
 
-    private String total;
+    private BigDecimal total;
 
     @Schema(description = "Tipo de pagamento")
     private PaymentType type;

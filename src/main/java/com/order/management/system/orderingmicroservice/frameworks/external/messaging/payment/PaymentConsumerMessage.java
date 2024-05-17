@@ -43,20 +43,17 @@ public class PaymentConsumerMessage {
         try {
             Order order = orderGateway.findById(paymentMessage.getOrderId());
 
-            if (OrderStatus.WAITING_PAYMENT.equals(order.getStatus())) {
+            if (!OrderStatus.CANCELED.equals(order.getStatus())) {
                 Map<String, String> response = paymentWeb.processPayment(paymentMessage);
 
                 if (response.get("status").compareTo("AUTORIZADO") == 0) {
-                    orderStatusController.updateStatus(OrderStatus.PAYMENT_ACCEPT, paymentMessage.getOrderId());
-
-                    statusPublishMessage.sendMessage(order.getId(), OrderStatus.SHIPPING_READY);
+                    statusPublishMessage.sendMessage(order.getId(), OrderStatus.PAYMENT_ACCEPT);
                 } else {
-                    orderStatusController.cancel(paymentMessage.getOrderId(), OrderCancellationType.PAYMENT_FAILURE);
+                    statusPublishMessage.sendMessage(order.getId(), OrderStatus.CANCELED, OrderCancellationType.PAYMENT_FAILURE);
                 }
-            } else if (!OrderStatus.CANCELED.equals(order.getStatus())) {
-                paymentPublishMessaging.sendMessage(paymentMessage);
             }
         } catch (NoSuchElementException e) {
+            statusPublishMessage.sendMessage(paymentMessage.getOrderId(), OrderStatus.CANCELED, OrderCancellationType.PAYMENT_FAILURE);
             LOGGER.error(paymentMessage.getOrderId().toString().concat(": ").concat(e.getMessage()));
         }
     }

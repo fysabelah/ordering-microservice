@@ -1,11 +1,14 @@
 package com.order.management.system.orderingmicroservice.entities;
 
+import com.order.management.system.orderingmicroservice.util.enums.PaymentStatus;
 import com.order.management.system.orderingmicroservice.util.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity(name = "Payment")
 @Table(name = "payments")
@@ -23,8 +26,8 @@ public class Payment {
     @Column
     private String brand;
 
-    @Column
-    private String total;
+    @Column(precision = 15, scale = 4)
+    private BigDecimal total;
 
     @Enumerated(value = EnumType.STRING)
     private PaymentType type;
@@ -43,5 +46,8 @@ public class Payment {
 
     @Column
     private String securityCode;
+
+    @Enumerated(value = EnumType.STRING)
+    private PaymentStatus status;
 
 }

@@ -3,6 +3,7 @@ package com.order.management.system.orderingmicroservice.interfaceadapters.prese
 import com.order.management.system.orderingmicroservice.entities.Payment;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.dtos.PaymentDto;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.messages.PaymentMessage;
+import com.order.management.system.orderingmicroservice.util.enums.PaymentStatus;
 import com.order.management.system.orderingmicroservice.util.enums.PaymentType;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ public class PaymentPresenter {
         payment.setHolder(paymentDto.getHolder());
         payment.setExpirationDate(paymentDto.getExpirationDate());
         payment.setSecurityCode(paymentDto.getSecurityCode());
+        payment.setStatus(PaymentStatus.PENDING);
 
         return payment;
     }
@@ -31,7 +33,7 @@ public class PaymentPresenter {
 
         message.setOrderId(orderId);
         message.setBrand(paymentDto.getBrand());
-        message.setTotal(paymentDto.getTotal());
+        message.setTotal(paymentDto.getTotal() != null ? paymentDto.getTotal().toString() : null);
         message.setType(paymentDto.getType());
         message.setInstallments(getInstallments(paymentDto.getType(), paymentDto.getInstallments()));
         message.setNumber(paymentDto.getNumber());
