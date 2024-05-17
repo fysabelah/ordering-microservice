@@ -79,12 +79,18 @@ public class MessagingBeans {
 
     @Bean
     public Queue createPaymentProcessQueue() {
-        return new Queue(paymentProcessQueue, true);
+        return QueueBuilder.durable(paymentProcessQueue)
+                .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK)
+                .withArgument(DEAD_LETTER_ROUTING_KEY, "payment")
+                .build();
     }
 
     @Bean
     public Queue createTransportationCancelQueue() {
-        return new Queue(transportSendCancelation, true);
+        return QueueBuilder.durable(transportSendCancelation)
+                .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK)
+                .withArgument(DEAD_LETTER_ROUTING_KEY, "logistics")
+                .build();
     }
 
     @Bean
@@ -114,7 +120,9 @@ public class MessagingBeans {
                 new Queue(QUEUE_FALLBACK),
                 new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "client", null),
                 new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "stock-reservation", null),
-                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "stock-cancelation", null)
+                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "stock-cancelation", null),
+                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "payment", null),
+                new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "logistics", null)
         );
     }
 

@@ -3,7 +3,7 @@ package com.order.management.system.orderingmicroservice.interfaceadapters.contr
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.client.ClientPublishMessage;
-import com.order.management.system.orderingmicroservice.frameworks.external.messaging.PaymentMessaging;
+import com.order.management.system.orderingmicroservice.frameworks.external.messaging.payment.PaymentPublishMessaging;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.product.StockProduceMessage;
 import com.order.management.system.orderingmicroservice.interfaceadapters.gateways.OrderGateway;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.OrderPresenter;
@@ -35,7 +35,7 @@ public class OrderController {
     private StockProduceMessage stockProduceMessage;
 
     @Resource
-    private PaymentMessaging paymentMessaging;
+    private PaymentPublishMessaging paymentPublishMessaging;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
 
@@ -53,7 +53,7 @@ public class OrderController {
         stockProduceMessage.sendMessageProcessStock(dto.getItems(), order.getId());
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_PAYMENT", order.getId().toString()));
-        paymentMessaging.sendMessage(dto.getPayment(), order.getId());
+        paymentPublishMessaging.sendMessage(dto.getPayment(), order.getId());
 
         return presenter.convert(order);
     }

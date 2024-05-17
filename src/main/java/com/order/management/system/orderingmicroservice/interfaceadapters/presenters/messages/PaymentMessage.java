@@ -25,6 +25,4 @@ public class PaymentMessage {
     private String expirationDate;
 
     private String securityCode;
-
-    private Integer numberOfAttempts;
 }
