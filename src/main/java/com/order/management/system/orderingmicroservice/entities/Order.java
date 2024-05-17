@@ -40,7 +40,7 @@ public class Order {
     @Column(precision = 15, scale = 4)
     private BigDecimal discounts;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Payment payment;
 
     @OneToMany(cascade = CascadeType.PERSIST)

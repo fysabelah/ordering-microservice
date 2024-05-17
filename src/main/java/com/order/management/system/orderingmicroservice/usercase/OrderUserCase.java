@@ -5,6 +5,7 @@ import com.order.management.system.orderingmicroservice.entities.Order;
 import com.order.management.system.orderingmicroservice.entities.Shipment;
 import com.order.management.system.orderingmicroservice.entities.StatusHistory;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.ClientPresenter;
+import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.PaymentPresenter;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.ProductsPresenter;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.dtos.Dto;
 import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
@@ -28,6 +29,9 @@ public class OrderUserCase {
     @Autowired
     private ProductsPresenter productsPresenter;
 
+    @Autowired
+    private PaymentPresenter paymentPresenter;
+
     public Order createOrder(Dto dto) {
         Order order = new Order();
 
@@ -37,6 +41,8 @@ public class OrderUserCase {
         order.setItems(productsPresenter.convertToEntity(dto.getItems()));
         order.setShipment(new Shipment(dto.getAddress()));
         order.setDiscounts(dto.getDiscounts() == null ? BigDecimal.ZERO : dto.getDiscounts());
+
+        order.setPayment(paymentPresenter.convert(dto.getPayment()));
 
         StatusHistory statusHistory = new StatusHistory(OrderStatus.PENDING, LocalDateTime.now(clock));
         order.setStatusHistory(List.of(statusHistory));
@@ -51,6 +57,7 @@ public class OrderUserCase {
                 .subtract(order.getDiscounts());
 
         order.setTotal(total);
+        order.getPayment().setTotal(total);
 
         return order;
     }

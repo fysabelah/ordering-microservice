@@ -20,9 +20,10 @@ create table payments (
     installments integer,
     number varchar(255),
     security_code varchar(255),
-    total varchar(255),
+    total numeric(15,4),
     type varchar(255) check (type in ('CREDIT','DEBIT')),
-    primary key (id)
+    primary key (id),
+    status varchar(255) check (status in ('PENDING', 'AUTHORIZED', 'UNAUTHORIZED'))
 );
 
 create table shipments (
