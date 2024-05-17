@@ -6,10 +6,13 @@ import com.order.management.system.orderingmicroservice.interfaceadapters.presen
 import com.order.management.system.orderingmicroservice.util.enums.OrderCancellationType;
 import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
 import org.springframework.amqp.core.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 @Component
 public class StatusPublishMessage extends PublishMessageQueue {
@@ -17,12 +20,17 @@ public class StatusPublishMessage extends PublishMessageQueue {
     @Value("${messaging.queue.status}")
     private String statusUpdateQueue;
 
+    @Autowired
+    private Clock clock;
+
     public void sendMessage(Integer orderId, OrderStatus status, OrderCancellationType cancellationType) throws JsonProcessingException {
         super.sendMessage(create(orderId, status, cancellationType), statusUpdateQueue);
     }
 
     private Message create(Integer orderId, OrderStatus status, OrderCancellationType cancellationType) throws JsonProcessingException {
-        StatusMessage statusMessage = new StatusMessage(orderId, status, cancellationType);
+        LocalDateTime date = LocalDateTime.now(clock);
+
+        StatusMessage statusMessage = new StatusMessage(orderId, status, cancellationType, date);
 
         return new Message(super.objectMapper.writeValueAsString(statusMessage).getBytes(StandardCharsets.UTF_8));
     }
