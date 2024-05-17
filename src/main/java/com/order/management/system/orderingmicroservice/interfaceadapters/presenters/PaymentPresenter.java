@@ -38,7 +38,6 @@ public class PaymentPresenter {
         message.setHolder(paymentDto.getHolder());
         message.setExpirationDate(paymentDto.getExpirationDate());
         message.setSecurityCode(paymentDto.getSecurityCode());
-        message.setNumberOfAttempts(0);
 
         return message;
     }

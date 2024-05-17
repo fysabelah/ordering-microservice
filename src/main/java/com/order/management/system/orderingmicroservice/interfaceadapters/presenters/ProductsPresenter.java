@@ -45,7 +45,6 @@ public class ProductsPresenter {
     public StockMessage convert(List<ItemDto> items, int orderId) {
         StockMessage message = new StockMessage();
 
-        message.setNumberOfAttempts(0);
         message.setOrderId(orderId);
 
         List<StockMessage.Product> products = new ArrayList<>();

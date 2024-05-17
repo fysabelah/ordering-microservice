@@ -14,8 +14,6 @@ public class StockMessage {
 
     private List<Product> products;
 
-    private Integer numberOfAttempts;
-
     @Getter
     @Setter
     public static class Product {
