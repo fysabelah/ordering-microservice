@@ -38,4 +38,10 @@ public class StatusPublishMessage extends PublishMessageQueue {
     public void sendMessage(Integer orderId, OrderStatus status) throws JsonProcessingException {
         super.sendMessage(create(orderId, status, null), statusUpdateQueue);
     }
+
+    public void sendMessage(StatusMessage statusMessage) throws JsonProcessingException {
+        Message message = new Message(super.objectMapper.writeValueAsString(statusMessage).getBytes(StandardCharsets.UTF_8));
+
+        super.sendMessage(message, statusUpdateQueue);
+    }
 }

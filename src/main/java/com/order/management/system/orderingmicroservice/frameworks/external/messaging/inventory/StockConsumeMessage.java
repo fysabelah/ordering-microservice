@@ -1,4 +1,4 @@
-package com.order.management.system.orderingmicroservice.frameworks.external.messaging.product;
+package com.order.management.system.orderingmicroservice.frameworks.external.messaging.inventory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.frameworks.external.interfaces.product.InventoryWeb;

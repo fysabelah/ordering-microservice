@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +27,6 @@ public class OrderDto extends Dto {
     private BigDecimal total;
 
     private String urlTracking;
+
+    private List<StatusHistoryDto> statusHistory;
 }
