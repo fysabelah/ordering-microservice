@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.client.ClientPublishMessage;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.payment.PaymentPublishMessaging;
-import com.order.management.system.orderingmicroservice.frameworks.external.messaging.product.StockProduceMessage;
+import com.order.management.system.orderingmicroservice.frameworks.external.messaging.inventory.StockProduceMessage;
 import com.order.management.system.orderingmicroservice.interfaceadapters.gateways.OrderGateway;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.OrderPresenter;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.dtos.Dto;
@@ -14,6 +14,7 @@ import com.order.management.system.orderingmicroservice.util.MessageUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,6 +38,9 @@ public class OrderController {
     @Resource
     private PaymentPublishMessaging paymentPublishMessaging;
 
+    @Autowired
+    private StockController stockController;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
 
     public OrderDto insert(Dto dto) throws JsonProcessingException {
@@ -49,8 +53,7 @@ public class OrderController {
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_CLIENT", order.getId().toString(), order.getClient().getDocument()));
         clientPublishMessage.sendMessage(order);
 
-        LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_STOCK", order.getId().toString()));
-        stockProduceMessage.sendMessageProcessStock(dto.getItems(), order.getId());
+        stockController.sendMessageConfirmReservation(dto.getItems(), order.getId());
 
         LOGGER.info(MessageUtil.getMessage("LOG_MESSAGE_VALIDATE_PAYMENT", order.getId().toString()));
         paymentPublishMessaging.sendMessage(dto.getPayment(), order.getId());

@@ -6,8 +6,6 @@ import com.order.management.system.orderingmicroservice.util.MessageUtil;
 import com.order.management.system.orderingmicroservice.util.enums.OrderCancellationType;
 import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
 import com.order.management.system.orderingmicroservice.util.exception.BusinessException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +19,6 @@ public class OrderStatusUserCase {
     @Autowired
     private Clock clock;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderStatusUserCase.class);
-
     public boolean hasStock(List<StatusHistory> statusHistory) {
         return statusHistory != null && statusHistory.stream()
                 .anyMatch(status -> OrderStatus.STOCK_SEPARATION.compareTo(status.getStatus()) == 0);
@@ -30,14 +26,22 @@ public class OrderStatusUserCase {
 
     public boolean hasTransportantionHistory(List<StatusHistory> statusHistory) {
         return statusHistory != null && statusHistory.stream()
-                .anyMatch(status -> OrderStatus.SHIPPED.compareTo(status.getStatus()) == 0);
+                .anyMatch(status -> OrderStatus.SHIPPED.equals(status.getStatus()) || OrderStatus.ON_CARRIAGE.equals(status.getStatus()));
     }
 
-    public void updateStatusCanceled(Order order, OrderCancellationType cancellationType) {
+    public boolean hasTransportantionHistory(OrderStatus status) {
+        return List.of(OrderStatus.SHIPPED, OrderStatus.ON_CARRIAGE).contains(status);
+    }
+
+    public void updateStatusCanceled(Order order, OrderCancellationType cancellationType, LocalDateTime processAt) throws BusinessException {
+        if (OrderStatus.DELIVERED.equals(order.getStatus())) {
+            throw new BusinessException(MessageUtil.getMessage("MESSAGE_STATUS_DELIVERED_TO_CANCEL"));
+        }
+
         order.setStatus(OrderStatus.CANCELED);
         order.setMotive(cancellationType);
 
-        StatusHistory statusHistory = new StatusHistory(OrderStatus.CANCELED, LocalDateTime.now(clock));
+        StatusHistory statusHistory = new StatusHistory(OrderStatus.CANCELED, processAt == null ? LocalDateTime.now(clock) : processAt);
         order.getStatusHistory().add(statusHistory);
     }
 
@@ -46,9 +50,7 @@ public class OrderStatusUserCase {
             throw new IllegalArgumentException(MessageUtil.getMessage("MESSAGE_STATUS_UPDATE_TRACKING_REQUIRED"));
         }
 
-        if (OrderStatus.SHIPPED.compareTo(order.getStatus()) != 0) {
-            LOGGER.warn(MessageUtil.getMessage("LOG_MESSAGE_ORDER_CANT_BE_UPDATED", order.getId().toString()));
-
+        if (!OrderStatus.SHIPPED.equals(order.getStatus())) {
             throw new BusinessException("MESSAGE_STATUS_UPDATE_INVALID", order.getStatus().toString(), OrderStatus.ON_CARRIAGE.toString());
         }
 
@@ -68,15 +70,10 @@ public class OrderStatusUserCase {
         validTransitions.put(OrderStatus.PROCESSING, new HashSet<>(Arrays.asList(OrderStatus.STOCK_SEPARATION, OrderStatus.WAITING_PAYMENT)));
         validTransitions.put(OrderStatus.WAITING_PAYMENT, new HashSet<>(Collections.singletonList(OrderStatus.PAYMENT_ACCEPT)));
         validTransitions.put(OrderStatus.STOCK_SEPARATION, new HashSet<>(Arrays.asList(OrderStatus.PROCESSING, OrderStatus.WAITING_PAYMENT)));
+        validTransitions.put(OrderStatus.PAYMENT_ACCEPT, new HashSet<>(Collections.singletonList(OrderStatus.SHIPPING_READY)));
         validTransitions.put(OrderStatus.SHIPPING_READY, new HashSet<>(Collections.singletonList(OrderStatus.SHIPPED)));
-        validTransitions.put(OrderStatus.SHIPPED, new HashSet<>(Collections.singletonList(OrderStatus.DELIVERED)));
 
         if (validTransitions.containsKey(currentStatus) && validTransitions.get(currentStatus).contains(newStatus)) {
-            if ((currentStatus == OrderStatus.PROCESSING && hasStock(order.getStatusHistory())) ||
-                    (currentStatus == OrderStatus.STOCK_SEPARATION && hasValidCustomer(order.getStatusHistory()))) {
-                newStatus = OrderStatus.WAITING_PAYMENT;
-            }
-
             order.setStatus(newStatus);
 
             StatusHistory statusHistory = new StatusHistory(newStatus, LocalDateTime.now(clock));
@@ -93,4 +90,17 @@ public class OrderStatusUserCase {
                 .anyMatch(status -> OrderStatus.PROCESSING.compareTo(status.getStatus()) == 0);
     }
 
+    public boolean moveToWaitingPayment(List<StatusHistory> statusHistory, OrderStatus status) {
+        return hasValidCustomer(statusHistory) && hasStock(statusHistory) && !OrderStatus.WAITING_PAYMENT.equals(status);
+    }
+
+    public void updateToDelivered(Order order) throws BusinessException {
+        if (!OrderStatus.ON_CARRIAGE.equals(order.getStatus())) {
+            throw new BusinessException("MESSAGE_STATUS_UPDATE_INVALID", order.getStatus().toString(), OrderStatus.ON_CARRIAGE.toString());
+        }
+
+        order.setStatus(OrderStatus.DELIVERED);
+
+        order.getStatusHistory().add(new StatusHistory(OrderStatus.DELIVERED, LocalDateTime.now(clock)));
+    }
 }

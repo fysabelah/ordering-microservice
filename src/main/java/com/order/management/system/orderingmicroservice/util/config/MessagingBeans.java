@@ -33,12 +33,16 @@ public class MessagingBeans {
     @Value("${messaging.queue.payment}")
     private String paymentProcessQueue;
 
-    @Value("${messaging.queue.transportation.cancel}")
-    private String transportSendCancelation;
+    @Value("${messaging.queue.transportation}")
+    private String logisticsProcessQueue;
 
     private static final String EXCHANGE_FALLBACK = "x.process-failure";
 
+    private static final String EXCHANGE_FALLBACK_STATUS = "x.process-failure-status";
+
     private static final String QUEUE_FALLBACK = "q.fall-back-process";
+
+    private static final String QUEUE_FALLBACK_STATUS = "q.fall-back-process-status";
 
     private static final String DEAD_LETTER_EXCHANGE_KEY = "x-dead-letter-exchange";
 
@@ -58,7 +62,10 @@ public class MessagingBeans {
 
     @Bean
     public Queue createStatusUpdateQueue() {
-        return new Queue(statusUpdateQueue, true);
+        return QueueBuilder.durable(statusUpdateQueue)
+                .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK_STATUS)
+                .withArgument(DEAD_LETTER_ROUTING_KEY, "status")
+                .build();
     }
 
     @Bean
@@ -87,7 +94,7 @@ public class MessagingBeans {
 
     @Bean
     public Queue createTransportationCancelQueue() {
-        return QueueBuilder.durable(transportSendCancelation)
+        return QueueBuilder.durable(logisticsProcessQueue)
                 .withArgument(DEAD_LETTER_EXCHANGE_KEY, EXCHANGE_FALLBACK)
                 .withArgument(DEAD_LETTER_ROUTING_KEY, "logistics")
                 .build();
@@ -123,6 +130,15 @@ public class MessagingBeans {
                 new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "stock-cancelation", null),
                 new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "payment", null),
                 new Binding(QUEUE_FALLBACK, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK, "logistics", null)
+        );
+    }
+
+    @Bean
+    public Declarables createDeadLetterStatusUpdate() {
+        return new Declarables(
+                new DirectExchange(EXCHANGE_FALLBACK_STATUS),
+                new Queue(QUEUE_FALLBACK_STATUS),
+                new Binding(statusUpdateQueue, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK_STATUS, "status", null)
         );
     }
 

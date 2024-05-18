@@ -3,6 +3,7 @@ package com.order.management.system.orderingmicroservice.frameworks.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.interfaceadapters.controllers.OrderStatusController;
 import com.order.management.system.orderingmicroservice.util.enums.OrderCancellationType;
+import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
 import com.order.management.system.orderingmicroservice.util.exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,18 +22,26 @@ public class StatusWeb {
 
     @PutMapping
     @Operation(summary = "Atualizar status para cancelado")
-    public ResponseEntity<Void> cancel(@Parameter(description = "Identificação do pedido", example = "10") @RequestParam Integer orderId) throws JsonProcessingException {
-        controller.cancel(orderId, OrderCancellationType.CANCELED_BY_USER);
+    public ResponseEntity<Void> cancel(@Parameter(description = "Identificação do pedido", example = "10") @RequestParam Integer orderId) throws JsonProcessingException, BusinessException {
+        controller.updateStatus(orderId, OrderStatus.CANCELED, OrderCancellationType.CANCELED_BY_USER, null);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/ON_CARRIAGE/{id}")
     @Operation(summary = "Atualizar pedido para o status ON_CARRIAGE")
-    public ResponseEntity<Void> updateToOnCarrier(@Parameter(description = "Identificação do pedido", example = "10") @PathVariable Integer id,
+    public ResponseEntity<Void> update(@Parameter(description = "Identificação do pedido", example = "10") @PathVariable Integer id,
                                                   @Parameter(description = "Código de rastreio", example = "ERIEIR3434") @RequestParam String trackingNumber,
                                                   @Parameter(description = "URL tracking", example = "http://rastreamento.com/ERIEIR3434") @RequestParam String urlTracking) throws BusinessException {
-        controller.updateStatus(id, trackingNumber, urlTracking);
+        controller.updateToOnCarrier(id, trackingNumber, urlTracking);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/DELIVERED/{id}")
+    @Operation(summary = "Atualizar pedido para o status DELIVERED")
+    public ResponseEntity<Void> updateToOnCarrier(@Parameter(description = "Identificação do pedido", example = "10") @PathVariable Integer id) throws BusinessException {
+        controller.updateToDelivered(id);
 
         return ResponseEntity.noContent().build();
     }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.management.system.orderingmicroservice.entities.Order;
 import com.order.management.system.orderingmicroservice.frameworks.external.interfaces.payment.PaymentWeb;
 import com.order.management.system.orderingmicroservice.frameworks.external.messaging.status.StatusPublishMessage;
-import com.order.management.system.orderingmicroservice.interfaceadapters.controllers.OrderStatusController;
 import com.order.management.system.orderingmicroservice.interfaceadapters.gateways.OrderGateway;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.messages.PaymentMessage;
 import com.order.management.system.orderingmicroservice.util.enums.OrderCancellationType;
@@ -22,9 +21,6 @@ import java.util.NoSuchElementException;
 public class PaymentConsumerMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentConsumerMessage.class);
-
-    @Autowired
-    private OrderStatusController orderStatusController;
 
     @Autowired
     private PaymentWeb paymentWeb;

@@ -42,7 +42,7 @@ create table shipments (
 create table orders (
     id serial not null,
     discounts numeric(15,4),
-    motive varchar(255) check (motive in ('STOCKOUT','PAYMENT_FAILURE','REFUSED_CARRIER','CANCELED_BY_USER')),
+    motive varchar(255) check (motive in ('STOCKOUT', 'PAYMENT_FAILURE', 'REFUSED_CARRIER', 'CANCELED_BY_USER', 'EXCEEDED_ATTEMPTS')),
     status varchar(255) not null check (status in ('PENDING', 'PROCESSING','WAITING_PAYMENT','PAYMENT_ACCEPT','STOCK_SEPARATION','SHIPPING_READY', 'SHIPPED', 'ON_CARRIAGE','DELIVERED','CANCELED')),
     total numeric(15,4),
     client_document varchar(255),
