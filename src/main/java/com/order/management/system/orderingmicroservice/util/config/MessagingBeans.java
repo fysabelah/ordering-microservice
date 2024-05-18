@@ -133,12 +133,23 @@ public class MessagingBeans {
         );
     }
 
+
+    /* Preferir valida o route ao invés de seguir com a abordagem direta. Estava com muita duplicação.
     @Bean
     public Declarables createDeadLetterStatusUpdate() {
         return new Declarables(
                 new DirectExchange(EXCHANGE_FALLBACK_STATUS),
                 new Queue(QUEUE_FALLBACK_STATUS),
                 new Binding(statusUpdateQueue, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK_STATUS, "status", null)
+        );
+    }*/
+
+    @Bean
+    public Declarables createDeadLetterStatusUpdate() {
+        return new Declarables(
+                new DirectExchange(EXCHANGE_FALLBACK_STATUS),
+                new Queue(QUEUE_FALLBACK_STATUS),
+                new Binding(QUEUE_FALLBACK_STATUS, Binding.DestinationType.QUEUE, EXCHANGE_FALLBACK_STATUS, "status", null)
         );
     }
 
