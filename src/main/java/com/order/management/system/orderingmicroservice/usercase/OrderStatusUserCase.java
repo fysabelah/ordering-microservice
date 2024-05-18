@@ -5,6 +5,7 @@ import com.order.management.system.orderingmicroservice.entities.StatusHistory;
 import com.order.management.system.orderingmicroservice.util.MessageUtil;
 import com.order.management.system.orderingmicroservice.util.enums.OrderCancellationType;
 import com.order.management.system.orderingmicroservice.util.enums.OrderStatus;
+import com.order.management.system.orderingmicroservice.util.enums.PaymentStatus;
 import com.order.management.system.orderingmicroservice.util.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -79,6 +80,10 @@ public class OrderStatusUserCase {
             StatusHistory statusHistory = new StatusHistory(newStatus, LocalDateTime.now(clock));
             order.getStatusHistory().add(statusHistory);
 
+            if (OrderStatus.PAYMENT_ACCEPT.equals(newStatus)) {
+                order.getPayment().setStatus(PaymentStatus.AUTHORIZED);
+            }
+
             return true;
         }
 
@@ -90,8 +95,9 @@ public class OrderStatusUserCase {
                 .anyMatch(status -> OrderStatus.PROCESSING.compareTo(status.getStatus()) == 0);
     }
 
-    public boolean moveToWaitingPayment(List<StatusHistory> statusHistory, OrderStatus status) {
-        return hasValidCustomer(statusHistory) && hasStock(statusHistory) && !OrderStatus.WAITING_PAYMENT.equals(status);
+    public boolean moveToWaitingPayment(List<StatusHistory> statusHistory, OrderStatus currentStatus) {
+        return ((currentStatus == OrderStatus.PROCESSING && hasStock(statusHistory)) ||
+                (currentStatus == OrderStatus.STOCK_SEPARATION && hasValidCustomer(statusHistory)));
     }
 
     public void updateToDelivered(Order order) throws BusinessException {

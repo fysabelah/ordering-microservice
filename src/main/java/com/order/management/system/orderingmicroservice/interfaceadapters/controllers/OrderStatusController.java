@@ -87,7 +87,6 @@ public class OrderStatusController {
         LOGGER.info(getMessage("LOG_MESSAGE_CANCEL_ORDER", order.getId().toString(), order.getMotive().toString()));
     }
 
-    // TODO VALIDAR MENSAGEM QUE FICARAM COM STATUS PARA TRAS
     public boolean updateStatus(Integer orderId, OrderStatus status, OrderCancellationType motive, LocalDateTime processAt) throws JsonProcessingException, BusinessException {
         Order order = orderGateway.findByIdWithStatusHistory(orderId);
 
@@ -100,11 +99,6 @@ public class OrderStatusController {
         if (OrderStatus.CANCELED.equals(order.getStatus())) {
             updateStatusHistory(order, status, processAt, motive);
 
-            return true;
-        }
-
-        // Discard messages
-        if (order.getStatus().equals(status)) {
             return true;
         }
 
