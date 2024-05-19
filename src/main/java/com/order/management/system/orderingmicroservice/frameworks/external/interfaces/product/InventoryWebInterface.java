@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PutMapping;
 
-@FeignClient("inventory-microservice")
+@FeignClient("product-microservice")
 interface InventoryWebInterface {
 
     @PutMapping(value = "/reservation/confirmation")
