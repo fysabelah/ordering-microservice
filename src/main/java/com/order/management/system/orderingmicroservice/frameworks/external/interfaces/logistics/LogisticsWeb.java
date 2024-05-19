@@ -25,7 +25,7 @@ public class LogisticsWeb {
 
     public void createDelivery(Integer orderId, String cep, JsonNode items) throws ExternalInterfaceException {
         try {
-            logisticsWebInterface.createDelivery(orderId.toString(), cep, items);
+            logisticsWebInterface.createDelivery(cep, orderId.toString(), items);
         } catch (FeignException exception) {
             throw new ExternalInterfaceException(MessageUtil.getMessage("LOG_EXTERNAL_SERVICE_LOGISTICS", orderId.toString()), exception);
         } catch (Exception exception) {
