@@ -2,17 +2,14 @@ package com.order.management.system.orderingmicroservice.frameworks.external.int
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@FeignClient("tracking-microservice")
+@FeignClient("tracking-ms")
 public interface LogisticsWebInterface {
 
-    @DeleteMapping("/{orderId}")
-    JsonNode cancelDelivery(@PathVariable String orderId);
+    @DeleteMapping(value = "/tracking")
+    void cancelDelivery(@RequestParam String orderId);
 
-    @PostMapping("/{cep}/{orderId}")
-    JsonNode createDelivery(@PathVariable String orderId, @PathVariable String cep, @RequestBody JsonNode items);
+    @PostMapping(value = "/tracking")
+    void createDelivery(@RequestParam String cep, @RequestParam String id, @RequestBody JsonNode items);
 }
