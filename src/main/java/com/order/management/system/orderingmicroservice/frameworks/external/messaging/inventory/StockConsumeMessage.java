@@ -19,14 +19,14 @@ public class StockConsumeMessage {
     @Autowired
     private StatusPublishMessage statusPublishMessage;
 
-    @RabbitListener(queues = "stock.process")
+    @RabbitListener(queues = "order.stock.process")
     public void confirm(StockMessage stockMessage) throws ExternalInterfaceException, JsonProcessingException {
         inventoryWeb.confirmReservation(stockMessage);
 
         statusPublishMessage.sendMessage(stockMessage.getOrderId(), OrderStatus.STOCK_SEPARATION);
     }
 
-    @RabbitListener(queues = "stock.cancelation")
+    @RabbitListener(queues = "order.stock.cancelation")
     public void cancel(StockMessage stockMessage) throws ExternalInterfaceException {
         inventoryWeb.cancelReservation(stockMessage);
     }

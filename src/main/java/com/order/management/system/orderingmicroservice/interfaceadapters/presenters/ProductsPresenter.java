@@ -63,18 +63,21 @@ public class ProductsPresenter {
         return message;
     }
 
-    public ArrayNode convert(StockMessage stockMessage) {
+    public ObjectNode convert(StockMessage stockMessage) {
         ArrayNode arrayNode = objectMapper.createArrayNode();
 
         stockMessage.getProducts().forEach(product -> {
             ObjectNode object = objectMapper.createObjectNode();
 
-            object.put("id_reserva", product.getReservation());
+            object.put("id", product.getReservation());
 
             arrayNode.add(object);
         });
 
-        return arrayNode;
+        ObjectNode paylaod = objectMapper.createObjectNode();
+        paylaod.set("reservations", arrayNode);
+
+        return paylaod;
     }
 
     public ArrayNode convertToUpdateStock(StockMessage stockMessage) {

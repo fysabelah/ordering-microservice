@@ -25,7 +25,7 @@ public class StatusConsumeMessage {
     @Autowired
     private StatusPublishMessage statusPublishMessage;
 
-    @RabbitListener(queues = "status.update")
+    @RabbitListener(queues = "order.status.update")
     public void handleMessageProcessing(StatusMessage message) throws JsonProcessingException {
         try {
             boolean processed = statusController.updateStatus(message.getOrderId(), message.getStatus(), message.getMotive(), message.getProcessAt());

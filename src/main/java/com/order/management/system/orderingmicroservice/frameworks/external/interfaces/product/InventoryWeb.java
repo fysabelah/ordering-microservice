@@ -1,10 +1,12 @@
 package com.order.management.system.orderingmicroservice.frameworks.external.interfaces.product;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.ProductsPresenter;
 import com.order.management.system.orderingmicroservice.interfaceadapters.presenters.messages.StockMessage;
 import com.order.management.system.orderingmicroservice.util.exception.ExternalInterfaceException;
 import feign.FeignException;
+import io.swagger.v3.core.util.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +19,11 @@ public class InventoryWeb {
     @Autowired
     private ProductsPresenter presenter;
 
-    // TODO NÃO FOI POSSIVEL VALIDAR. Vai ter que voltar para arrumar os metódos
     public void confirmReservation(StockMessage stockMessage) throws ExternalInterfaceException {
         try {
-            ArrayNode json = presenter.convert(stockMessage);
+            JsonNode json = presenter.convert(stockMessage);
 
-            ArrayNode body = inventoryWebInterface.confirmReservation(json);
+            inventoryWebInterface.confirmReservation(json);
         } catch (FeignException exception) {
             throw new ExternalInterfaceException(exception);
         }
@@ -30,9 +31,9 @@ public class InventoryWeb {
 
     public void cancelReservation(StockMessage stockMessage) throws ExternalInterfaceException {
         try {
-            ArrayNode json = presenter.convert(stockMessage);
+            JsonNode json = presenter.convert(stockMessage);
 
-            ArrayNode body = inventoryWebInterface.cancelReservation(json);
+            inventoryWebInterface.cancelReservation(json);
         } catch (FeignException exception) {
             throw new ExternalInterfaceException(exception);
         }

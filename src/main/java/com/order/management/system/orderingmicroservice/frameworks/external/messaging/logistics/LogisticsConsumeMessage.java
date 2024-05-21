@@ -13,7 +13,7 @@ public class LogisticsConsumeMessage {
     @Autowired
     private LogisticsWeb logisticsWeb;
 
-    @RabbitListener(queues = "logistics.process")
+    @RabbitListener(queues = "order.logistics.process")
     public void handleLogisticsMessages(JsonNode jsonNode) throws ExternalInterfaceException {
         Integer orderId = jsonNode.get("orderId").asInt();
         boolean isToCancel = jsonNode.get("isToCancel").asBoolean();

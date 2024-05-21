@@ -23,7 +23,7 @@ public class ClientConsumeMessage {
     @Autowired
     private StatusPublishMessage statusPublishMessage;
 
-    @RabbitListener(queues = "client.validate")
+    @RabbitListener(queues = "order.client.validate")
     public void processMessage(ClientMessage client) throws JsonProcessingException {
         try {
             Optional<Client> optional = clientWeb.findClientByDocument(client.getDocument());

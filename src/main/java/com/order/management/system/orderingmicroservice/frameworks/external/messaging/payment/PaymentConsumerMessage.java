@@ -34,7 +34,7 @@ public class PaymentConsumerMessage {
     @Autowired
     private OrderGateway orderGateway;
 
-    @RabbitListener(queues = "payment.process")
+    @RabbitListener(queues = "order.payment.process")
     public void process(PaymentMessage paymentMessage) throws JsonProcessingException {
         try {
             Order order = orderGateway.findById(paymentMessage.getOrderId());

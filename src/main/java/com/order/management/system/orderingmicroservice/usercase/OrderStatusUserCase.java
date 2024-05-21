@@ -51,7 +51,7 @@ public class OrderStatusUserCase {
             throw new IllegalArgumentException(MessageUtil.getMessage("MESSAGE_STATUS_UPDATE_TRACKING_REQUIRED"));
         }
 
-        if (!OrderStatus.SHIPPED.equals(order.getStatus())) {
+        if (!OrderStatus.SHIPPED.equals(order.getStatus()) || OrderStatus.CANCELED.equals(order.getStatus())) {
             throw new BusinessException("MESSAGE_STATUS_UPDATE_INVALID", order.getStatus().toString(), OrderStatus.ON_CARRIAGE.toString());
         }
 
@@ -101,7 +101,7 @@ public class OrderStatusUserCase {
     }
 
     public void updateToDelivered(Order order) throws BusinessException {
-        if (!OrderStatus.ON_CARRIAGE.equals(order.getStatus())) {
+        if (!OrderStatus.ON_CARRIAGE.equals(order.getStatus()) || OrderStatus.DELIVERED.equals(order.getStatus())) {
             throw new BusinessException("MESSAGE_STATUS_UPDATE_INVALID", order.getStatus().toString(), OrderStatus.ON_CARRIAGE.toString());
         }
 
